@@ -157,7 +157,7 @@ This package was developed as a learning project for R package development, focu
 
 ## License
 
-MIT © Martin Mac
+MIT © Martin Hoblisch
 
 ## References
 
