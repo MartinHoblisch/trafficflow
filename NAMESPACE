@@ -3,3 +3,4 @@
 export(critical_density)
 export(flow_from_density)
 export(greenshields)
+export(plot_greenshields)

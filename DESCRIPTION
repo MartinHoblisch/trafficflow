@@ -2,7 +2,7 @@ Package: trafficflow
 Title: Greenshields Traffic Flow Model
 Version: 0.0.0.9000
 Authors@R: 
-    person("Martin", "Mac", , "	Example@example.com", role = c("aut", "cre"))
+    person("Martin", "Hoblisch", , "	Example@example.com", role = c("aut", "cre"))
 Description: Provides functions for calculating traffic flow based on the Greenshields model. Includes calculations for speed-density relationships, flow from density, and critical density for maximum flow.
 License: MIT + file LICENSE
 Encoding: UTF-8
@@ -13,3 +13,5 @@ BugReports: https://github.com/MartinHoblisch/trafficflow/issues
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
+Imports: 
+    ggplot2
