@@ -1,4 +1,4 @@
-# trafficflow <img src="man/figures/logo.png" align="right" height="139" alt="" />
+# trafficflow
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/MartinHoblisch/trafficflow/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/MartinHoblisch/trafficflow/actions/workflows/R-CMD-check.yaml)
@@ -12,17 +12,15 @@ trafficflow provides a clean implementation of the Greenshields traffic flow mod
 **Key features:**
 
 - Calculate vehicle speeds from traffic density using the linear Greenshields model
-- Compute traffic flow (vehicles per hour) from density measurements  
+- Compute traffic flow (vehicles per hour) from density measurements
 - Find critical density points that maximize traffic throughput
 - Vectorized operations for efficient batch calculations
-- Built-in parameter validation and sensible defaults
+- Built-in visualisation of speed-density relationships
 
 ## Installation
 
-### Development version
-
 This is currently a learning project. You can install and test locally:
-```r
+``` r
 # Clone the repository
 git clone https://github.com/MartinHoblisch/trafficflow.git
 
@@ -30,10 +28,8 @@ git clone https://github.com/MartinHoblisch/trafficflow.git
 devtools::load_all("path/to/trafficflow")
 ```
 
-### From GitHub (future)
-
 Once stabilized, install directly from GitHub:
-```r
+``` r
 # install.packages("devtools")
 devtools::install_github("MartinHoblisch/trafficflow")
 ```
@@ -42,74 +38,63 @@ devtools::install_github("MartinHoblisch/trafficflow")
 
 ### Basic calculations
 
-Calculate speed from traffic density using default parameters (free-flow speed: 130 km/h, jam density: 150 veh/km):
-```r
+Calculate speed from traffic density using default parameters
+(free-flow speed: 130 km/h, jam density: 150 veh/km):
+``` r
 library(trafficflow)
 
 # Speed at low density (sparse traffic)
 greenshields(density = 20)
 #> [1] 112.6667
 
-# Speed at high density (congested traffic)  
+# Speed at high density (congested traffic)
 greenshields(density = 120)
 #> [1] 26
 ```
 
 ### Traffic flow analysis
-
-Compute actual traffic flow (throughput) from density:
-```r
+``` r
 # Flow at various densities
 flow_from_density(density = c(25, 50, 75, 100))
 #> [1] 2708.333 4333.333 4875.000 4333.333
-
-# Flow decreases beyond critical density due to speed reduction
 ```
 
 ### Finding optimal conditions
-
-Determine the critical density that maximizes traffic flow:
-```r
+``` r
 critical_density()
 #>   critical_density speed_at_critical max_flow
 #> 1               75                65     4875
-
-# At 75 vehicles/km, traffic flows at maximum rate of 4875 veh/hr
 ```
 
-### Custom parameters
+### Visualisation
+``` r
+plot_greenshields()
+```
 
-Adjust model parameters for different road types:
-```r
-# Urban arterial: lower free-flow speed, higher jam density
-greenshields(
-  density = 40,
-  free_flow_speed = 60,  # km/h
-  jam_density = 200       # veh/km
-)
+![Greenshields Speed-Density Relationship](man/figures/greenshields_plot.png)
+
+The red dashed line marks the **critical density** (75 veh/km) at which 
+traffic flow is maximized. Beyond this point, increasing density reduces 
+throughput despite more vehicles being present.
+
+### Custom parameters
+``` r
+# Urban arterial
+greenshields(density = 40, free_flow_speed = 60, jam_density = 200)
 #> [1] 48
 
-# Highway: higher free-flow speed, lower jam density  
-greenshields(
-  density = 40,
-  free_flow_speed = 120,
-  jam_density = 120
-)
+# Highway
+greenshields(density = 40, free_flow_speed = 120, jam_density = 120)
 #> [1] 80
 ```
 
 ### Vectorized operations
-
-Process multiple density values efficiently:
-```r
+``` r
 densities <- seq(0, 150, by = 25)
-speeds <- greenshields(densities)
-flows <- flow_from_density(densities)
-
 data.frame(
   density = densities,
-  speed = round(speeds, 1),
-  flow = round(flows, 0)
+  speed   = round(greenshields(densities), 1),
+  flow    = round(flow_from_density(densities), 0)
 )
 #>   density speed flow
 #> 1       0 130.0    0
@@ -123,19 +108,21 @@ data.frame(
 
 ## Background
 
-The Greenshields model (1935) assumes a linear relationship between traffic speed and density:
+The Greenshields model (1935) assumes a linear relationship between 
+traffic speed and density:
 
 **v = v<sub>f</sub> × (1 - k/k<sub>jam</sub>)**
 
 Where:
 - **v** = speed at given density (km/h)
-- **v<sub>f</sub>** = free-flow speed with no congestion (km/h)  
+- **v<sub>f</sub>** = free-flow speed with no congestion (km/h)
 - **k** = traffic density (vehicles/km)
 - **k<sub>jam</sub>** = jam density when traffic stops (vehicles/km)
 
 Traffic flow is then: **q = k × v**
 
-The model predicts that maximum flow occurs at exactly half the jam density, a key insight for capacity planning.
+The model predicts that maximum flow occurs at exactly half the jam 
+density, a key insight for capacity planning.
 
 ## Functions
 
@@ -144,21 +131,25 @@ The model predicts that maximum flow occurs at exactly half the jam density, a k
 | `greenshields()` | Calculate speed from density |
 | `flow_from_density()` | Calculate traffic flow rate |
 | `critical_density()` | Find optimal density for max flow |
+| `plot_greenshields()` | Visualise speed-density relationship |
 
 ## Development
 
-This package was developed as a learning project for R package development, focusing on:
+This package was developed as a learning project for R package 
+development, focusing on:
 
 - Clean function design with sensible defaults
-- Comprehensive unit testing with testthat
+- Comprehensive unit testing with testthat (21 tests)
 - Roxygen2 documentation
 - Vectorized operations
-- Git/GitHub workflow
+- GitHub Actions CI/CD
+- ggplot2 visualisation
 
 ## License
 
-MIT © Martin Hoblisch
+MIT © Martin Mac
 
 ## References
 
-Greenshields, B. D. (1935). A study of traffic capacity. *Highway Research Board Proceedings*, 14, 448-477.
+Greenshields, B. D. (1935). A study of traffic capacity. 
+*Highway Research Board Proceedings*, 14, 448-477.
